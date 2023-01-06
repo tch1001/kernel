@@ -70,8 +70,7 @@ static int so2_cdev_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
-	static int
-so2_cdev_release(struct inode *inode, struct file *file)
+static int so2_cdev_release(struct inode *inode, struct file *file)
 {
 	/* TODO 2/1: print message when the device file is closed. */
 	printk(LOG_LEVEL "close called!\n");
@@ -86,8 +85,7 @@ so2_cdev_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-	static ssize_t
-so2_cdev_read(struct file *file,
+static ssize_t so2_cdev_read(struct file *file,
 		char __user *user_buffer,
 		size_t size, loff_t *offset)
 {
@@ -196,22 +194,29 @@ static int so2_cdev_init(void)
 	int i;
 
 	/* TODO 1/6: register char device region for MY_MAJOR and NUM_MINORS starting at MY_MINOR */
+	printk("inside init\n");
 	err = register_chrdev_region(MKDEV(MY_MAJOR, MY_MINOR),
 			NUM_MINORS, MODULE_NAME);
 	if (err != 0) {
 		pr_info("register_chrdev_region");
 		return err;
 	}
+	printk("oh it didnt return err %d\n", NUM_MINORS);
 
 	for (i = 0; i < NUM_MINORS; i++) {
 #ifdef EXTRA
 		/* TODO 7/2: extra tasks, for home */
+		printk("1. device with minor no. %d\n", i);
 		devs[i].size = 0;
+		printk("2. device with minor no. %d\n", i);
 		memset(devs[i].buffer, 0, sizeof(devs[i].buffer));
+		printk("3. device with minor no. %d\n", i);
 #else
 		/*TODO 4/2: initialize buffer with MESSAGE string */
 		memcpy(devs[i].buffer, MESSAGE, sizeof(MESSAGE));
+		printk("4. device with minor no. %d\n", i);
 		devs[i].size = sizeof(MESSAGE);
+		printk("5. device with minor no. %d\n", i);
 #endif
 		/* TODO 7/2: extra tasks for home */
 		init_waitqueue_head(&devs[i].wq);
@@ -223,6 +228,7 @@ static int so2_cdev_init(void)
 		cdev_add(&devs[i].cdev, MKDEV(MY_MAJOR, i), 1);
 	}
 
+	printk("end of init %d\n", NUM_MINORS);
 	return 0;
 }
 
@@ -230,7 +236,9 @@ static void so2_cdev_exit(void)
 {
 	int i;
 
+	printk("NUM_MINORS=%d\n", NUM_MINORS);
 	for (i = 0; i < NUM_MINORS; i++) {
+		printk("removing device with minor no. %d\n", i);
 		/* TODO 2/1: delete cdev from kernel core */
 		cdev_del(&devs[i].cdev);
 	}
