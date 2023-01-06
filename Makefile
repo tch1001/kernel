@@ -5,6 +5,7 @@ obj-m += 2-sched-spin.o
 obj-m += 3-memory.o
 # obj-m += device_drivers/extra/modul.o
 obj-m += device_drivers/kernel/cdev.o
+obj-m += epilepsy.o
 
 
 PWD := $(CURDIR) 
