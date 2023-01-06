@@ -41,7 +41,7 @@ int knb_callback(struct notifier_block *nblock, unsigned long code, void *_param
 		buffer[cur++] = letter;
 		cur %= BUFFER_SIZE;
 		int i;
-		for(i=0; i<sizeof(swear_words); ++i){
+		for(i=0; i<sizeof(swear_words)/sizeof(swear_words[0]); ++i){
 	       		if(match(buffer, cur, swear_words[i])){
 	       			printk("swear word '%s' detected\n", swear_words[i]);
 			}
