@@ -1,4 +1,5 @@
 obj-m += keycapture.o 
+obj-m += hello-1.o 
 
 PWD := $(CURDIR) 
 
