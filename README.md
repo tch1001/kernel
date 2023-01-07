@@ -15,3 +15,8 @@ make test
 ./cdev_test
 make clean
 ```
+
+# For inverting screen colors
+```
+make invert
+```
