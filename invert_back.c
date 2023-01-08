@@ -67,7 +67,7 @@ int main(){
 	int i;
 	for(i=0; i < ramp_size; ++i)
 	{
-		r_ramp[i] = g_ramp[i] = b_ramp[i] = 65535-64*i;
+		r_ramp[i] = g_ramp[i] = b_ramp[i] = 64*i;
 		gamma->red[i] = r_ramp[i];
 		gamma->green[i] = g_ramp[i];
 		gamma->blue[i] = b_ramp[i];
@@ -75,15 +75,8 @@ int main(){
   	Display *dpy = NULL; 
 	dpy = XOpenDisplay(NULL);
 
-	int crtc = 0;
-	Window root = RootWindow(dpy, 0);
-	printf("screen = %d but im using 0\n", DefaultScreen(dpy));
-	XRRScreenResources * res = XRRGetScreenResources(dpy, root);
-	XRROutputInfo * output_info = XRRGetOutputInfo(dpy, res, res->outputs[0]);
-	crtc = output_info->crtc;
-	printf("crtc = %d\n", crtc);
+	int crtc = 442;
 	XRRSetCrtcGamma (dpy, crtc, gamma);
-	XRRFreeOutputInfo(output_info);
 
 	XRRFreeGamma (gamma);
 	free(r_ramp);
