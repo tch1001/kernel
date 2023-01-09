@@ -54,10 +54,13 @@ void error (char *fmt, ...), warning (char *fmt, ...), message(char *fmt, ...);
 # define BE_SHORT(a)  (a)
 #endif
 
-
+void swap(short unsigned int *a, 
+		short unsigned int *b){
+	int tmp = *b;
+	*b = *a;
+	*a = tmp;
+}
 int main(){
-	int ramp_size = 256;
-
 	u_int16_t tmpRampVal = 0;
 
 	int i;
@@ -65,36 +68,33 @@ int main(){
   	Display *dpy = NULL; 
 	dpy = XOpenDisplay(NULL);
 
-	int crtc = 0;
 	Window root = RootWindow(dpy, 0);
 	XRRScreenResources * res = XRRGetScreenResources(dpy, root);
+
 	XRROutputInfo * output_info = XRRGetOutputInfo(dpy, res, res->outputs[0]);
-	crtc = output_info->crtc;
-	ramp_size = XRRGetCrtcGammaSize(dpy, crtc);
+
+	int crtc = 0;
+	int ramp_size = 256;
+	if(output_info->crtc){
+	       	crtc = output_info->crtc;
+		ramp_size = XRRGetCrtcGammaSize(dpy, crtc);
+	}
+
 
 	XRRCrtcGamma * gamma = XRRAllocGamma (ramp_size);
-	u_int16_t *r_ramp = NULL, *g_ramp = NULL, *b_ramp = NULL;
-	r_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
-	g_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
-	b_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
+	gamma = XRRGetCrtcGamma(dpy, crtc);
 
-
-	for(i=0; i < ramp_size; ++i)
+	for(i=0; i < ramp_size/2; ++i)
 	{
-		r_ramp[i] = g_ramp[i] = b_ramp[i] = (1 ? i : (ramp_size-i))*257;
-		gamma->red[i] = r_ramp[i];
-		gamma->green[i] = g_ramp[i];
-		gamma->blue[i] = b_ramp[i];
+		swap(&gamma->red[i], 	&gamma->red[ramp_size-i-1]);
+		swap(&gamma->green[i], 	&gamma->green[ramp_size-i-1]);
+		swap(&gamma->blue[i], 	&gamma->blue[ramp_size-i-1]);
 	}
-	printf("%d %d\n", r_ramp[0], r_ramp[ramp_size-1]);
 	
 	XRRSetCrtcGamma (dpy, crtc, gamma);
 	XRRFreeOutputInfo(output_info);
 
 	XRRFreeGamma (gamma);
-	free(r_ramp);
-	free(g_ramp);
-	free(b_ramp);
 	XCloseDisplay(dpy);
 	return 0; 
 
