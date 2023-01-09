@@ -56,32 +56,38 @@ void error (char *fmt, ...), warning (char *fmt, ...), message(char *fmt, ...);
 
 
 int main(){
-	int ramp_size = 1024;
-	u_int16_t tmpRampVal = 0;
-	u_int16_t *r_ramp = NULL, *g_ramp = NULL, *b_ramp = NULL;
-	r_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
-	g_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
-	b_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
+	int ramp_size = 256;
 
-	XRRCrtcGamma * gamma = XRRAllocGamma (ramp_size);
+	u_int16_t tmpRampVal = 0;
+
 	int i;
-	for(i=0; i < ramp_size; ++i)
-	{
-		r_ramp[i] = g_ramp[i] = b_ramp[i] = 65535-64*i;
-		gamma->red[i] = r_ramp[i];
-		gamma->green[i] = g_ramp[i];
-		gamma->blue[i] = b_ramp[i];
-	}
+
   	Display *dpy = NULL; 
 	dpy = XOpenDisplay(NULL);
 
 	int crtc = 0;
 	Window root = RootWindow(dpy, 0);
-	printf("screen = %d but im using 0\n", DefaultScreen(dpy));
 	XRRScreenResources * res = XRRGetScreenResources(dpy, root);
 	XRROutputInfo * output_info = XRRGetOutputInfo(dpy, res, res->outputs[0]);
 	crtc = output_info->crtc;
-	printf("crtc = %d\n", crtc);
+	ramp_size = XRRGetCrtcGammaSize(dpy, crtc);
+
+	XRRCrtcGamma * gamma = XRRAllocGamma (ramp_size);
+	u_int16_t *r_ramp = NULL, *g_ramp = NULL, *b_ramp = NULL;
+	r_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
+	g_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
+	b_ramp = (unsigned short *) malloc (ramp_size * sizeof (unsigned short));
+
+
+	for(i=0; i < ramp_size; ++i)
+	{
+		r_ramp[i] = g_ramp[i] = b_ramp[i] = (1 ? i : (ramp_size-i))*257;
+		gamma->red[i] = r_ramp[i];
+		gamma->green[i] = g_ramp[i];
+		gamma->blue[i] = b_ramp[i];
+	}
+	printf("%d %d\n", r_ramp[0], r_ramp[ramp_size-1]);
+	
 	XRRSetCrtcGamma (dpy, crtc, gamma);
 	XRRFreeOutputInfo(output_info);
 
@@ -92,17 +98,6 @@ int main(){
 	XCloseDisplay(dpy);
 	return 0; 
 
-	for (i = 0; i < ramp_size; i++) {
-		if(i >= ramp_size / 2) break;
-		tmpRampVal = r_ramp[i];
-		r_ramp[i] = r_ramp[ramp_size - i - 1];
-		r_ramp[ramp_size - i - 1] = tmpRampVal;
-		tmpRampVal = g_ramp[i];
-		g_ramp[i] = g_ramp[ramp_size - i - 1];
-		g_ramp[ramp_size - i - 1] = tmpRampVal;
-		tmpRampVal = b_ramp[i];
-		b_ramp[i] = b_ramp[ramp_size - i - 1];
-		b_ramp[ramp_size - i - 1] = tmpRampVal;
-	}
+
 
 }

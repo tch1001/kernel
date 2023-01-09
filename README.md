@@ -18,5 +18,11 @@ make clean
 
 # For inverting screen colors
 ```
+apt install libx11-dev libxxf86vm-dev libxrandr-dev
 make invert
+```
+
+If things don't work, try
+```
+sudo systemctl restart display-manager
 ```
