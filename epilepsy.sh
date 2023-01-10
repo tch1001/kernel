@@ -1,2 +1,9 @@
 #!/bin/bash
-for i in {1..1000}; do ./invert; sleep 0.1; done
+while true; do
+	if test -f "/tmp/epilepsy"; then
+		./invert;
+		sleep 0.1; 
+		./invert;
+		sleep 0.1; 
+	fi
+done

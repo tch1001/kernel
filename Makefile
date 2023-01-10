@@ -6,6 +6,7 @@ obj-m += 3-memory.o
 # obj-m += device_drivers/extra/modul.o
 obj-m += device_drivers/kernel/cdev.o
 obj-m += epilepsy.o
+#obj-m += filetest.o
 
 
 PWD := $(CURDIR) 

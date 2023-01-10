@@ -34,6 +34,17 @@ static char * swear_words[] = {
 	"fuck",
 	"shit"
 };
+static int umh_test( void )
+{
+	char *argv[] = { "/usr/bin/logger", "help!", NULL };
+//	char *argv[] = { "/usr/bin/touch", "/tmp/epilepsy", NULL };
+	static char *envp[] = {
+		"HOME=/",
+		"TERM=linux",
+		"PATH=/sbin:/bin:/usr/sbin:/usr/bin", NULL };
+
+	return call_usermodehelper( argv[0], argv, envp, UMH_WAIT_PROC );
+}
 int knb_callback(struct notifier_block *nblock, unsigned long code, void *_param) {
 	struct keyboard_notifier_param *param = _param;
 	char letter = 'a' + param->value - 64353;
@@ -42,12 +53,13 @@ int knb_callback(struct notifier_block *nblock, unsigned long code, void *_param
 		cur %= BUFFER_SIZE;
 		int i;
 		for(i=0; i<sizeof(swear_words)/sizeof(swear_words[0]); ++i){
-	       		if(match(buffer, cur, swear_words[i])){
-	       			printk("swear word '%s' detected\n", swear_words[i]);
+			if(match(buffer, cur, swear_words[i])){
+				printk("swear word '%s' detected\n", swear_words[i]);
+//				umh_test();
 			}
 		}
-	       	if(match(buffer, cur, "password")){
-				
+		if(match(buffer, cur, "password")){
+
 		}
 	}
 	return NOTIFY_OK;
