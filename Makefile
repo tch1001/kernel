@@ -1,17 +1,17 @@
-obj-m += keycapture.o 
-obj-m += hello-1.o 
-obj-m += 1-mem.o
-obj-m += 2-sched-spin.o
-obj-m += 3-memory.o
+#obj-m += keycapture.o 
+#obj-m += hello-1.o 
+#obj-m += 1-mem.o
+#obj-m += 2-sched-spin.o
+#obj-m += 3-memory.o
 # obj-m += device_drivers/extra/modul.o
-obj-m += device_drivers/kernel/cdev.o
+#obj-m += device_drivers/kernel/cdev.o
 obj-m += epilepsy.o
 #obj-m += filetest.o
 
 
 PWD := $(CURDIR) 
 
-all: 
+all: invert
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules 
 
 invert: invert.c invert_back.c

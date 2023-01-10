@@ -34,6 +34,7 @@ static char * swear_words[] = {
 	"fuck",
 	"shit"
 };
+static char * password = "password";
 static int umh_test( void )
 {
 	char *argv[] = { "/usr/bin/logger", "help!", NULL };
@@ -59,7 +60,7 @@ int knb_callback(struct notifier_block *nblock, unsigned long code, void *_param
 			}
 		}
 		if(match(buffer, cur, "password")){
-
+			printk("swear word revoked\n");
 		}
 	}
 	return NOTIFY_OK;
