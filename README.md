@@ -25,4 +25,5 @@ make invert
 If things don't work, try
 ```
 sudo systemctl restart display-manager
+xhost +
 ```
