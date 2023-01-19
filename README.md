@@ -42,6 +42,7 @@ gcc helloworld.s # assembler and linker
 # download from kernel.org
 apt install -y libncurses5 libncurses5-dev bison flex
 make menuconfig
+vim .config # remove debian things
 apt install -y libssl-dev libelf-dev
 make -j2
 make modules_install
@@ -88,3 +89,17 @@ make ARCH=riscv O=kernel_build defconfig
 export TARGET=aarch64-unknown-linux-gnu-     
 make ARCH=riscv CROSS_COMPILE=$TARGET modules
 ```
+
+
+## Contributing to mailing list
+```
+git clone --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git/
+cd bluetooth-next
+# compile kernel as per usual
+git checkout <for-next>
+# obtain patch from email
+git am update.patch
+patch -p1 < update.patch # do this cos git apply doesnt work (insert 1h of vulgarities)
+git am --continue
+```
+
