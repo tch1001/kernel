@@ -98,6 +98,7 @@ cd bluetooth-next
 # compile kernel as per usual
 git checkout <for-next>
 # obtain patch from email
+```
 git am update.patch
 patch -p1 < update.patch # do this cos git apply doesnt work (insert 1h of vulgarities)
 git am --continue
@@ -194,7 +195,7 @@ mount -t proc proc /proc
 mount -t sysfs none /sys
                                                       
 # https://busybox.net/FAQ.html#job_control
-                                                      
+```                                                    
 mknod /dev/ttyS0 c 4 64
 setsid sh -c 'exec sh </dev/ttyS0 >/dev/ttyS0 2>&1'
 EOF                                                   
@@ -222,3 +223,24 @@ $ make modules_install
 $ make install
 ```
 When booting up, press and hold `<Shift>` to go to the grub menu, then go to advanced options to select the kernel you want to boot with.
+#Debugging the Kernel using GDB
+Using instructions from [here](https://www.starlab.io/blog/using-gdb-to-debug-the-linux-kernel)
+```bash
+vim .config # edit some stuff
+make -j32
+```
+Running time!
+```
+qemu-system-x86_64 -gdb tcp::1234 -S # the rest of the stuff
+gdb ./vmlinux
+target remote :1234
+continue
+```
+Use `^C` to SIGINT the kernel.
+## Interrupting Startup
+```
+target remote :1234
+hbreak start_kernel
+i b # info breakpoints
+c
+```
