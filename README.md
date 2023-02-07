@@ -281,3 +281,20 @@ SYSCALL_DEFINE3(lseek, unsigned int, fd, off_t, offset, unsigned int, whence)
 
 
 ## Pwn stuff
+```
+gdb a.out
+disassemble main
+r
+si
+show reg
+^x ^a # to open up TUI mode
+layout next # use the assembly view
+```
+Bypassing license key
+```
+break main
+r a
+ni # until the 2nd jne
+set $eflags ^= (1<<6)
+c
+```
