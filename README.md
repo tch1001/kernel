@@ -189,13 +189,9 @@ $ mkdir etc proc sys
 $ ls              
 $ cat << EOF > init                              
 #!/bin/sh
-
-                           
 mount -t proc proc /proc
 mount -t sysfs none /sys
                                                       
-# https://busybox.net/FAQ.html#job_control
-```                                                    
 mknod /dev/ttyS0 c 4 64
 setsid sh -c 'exec sh </dev/ttyS0 >/dev/ttyS0 2>&1'
 EOF                                                   
@@ -244,3 +240,44 @@ hbreak start_kernel
 i b # info breakpoints
 c
 ```
+Looking at the proces struct
+```
+(gdb) lx-ps                                               
+      TASK          PID    COMM    
+0xffffffff828169c0   0   swapper
+(gdb) p ((struct task_struct *) 0xffffffff828169c0)
+$11 = (struct task_struct *) 0xffffffff828169c0 <init_task>
+(gdb) p $11->pid
+$13 = 0
+```
+## Interrupts
+The first impt thing to do is learn how to interrupts work
+```
+(gdb) monitor info registers
+(gdb) set $idtr=0xfffffe0000000000
+(gdb) print /x *(uint64_t*)$idtr
+$15 = 0x81e08e00001008f0
+(gdb) define idt_entry
+>set $tmp = *(uint64_t*)($idtr + 8 * $arg0)
+>print (void *)(($tmp>>48<<16)|($tmp&0xffff))
+>end
+(gdb) set $i=0
+(gdb) idt_entry $i++
+```
+
+# System calls
+Let's pay some attention to 
+`syscalls_64.h` and `arch/x86/entry/syscall_64.c`. 
+The `syscall_64.c` file generates code using `extern`.
+
+The definition for the function is provided by the 
+`fs/read_write.c`. Namely,
+```c
+SYSCALL_DEFINE3(lseek, unsigned int, fd, off_t, offset, unsigned int, whence)
+{
+	return ksys_lseek(fd, offset, whence);
+}
+```
+
+
+## Pwn stuff
