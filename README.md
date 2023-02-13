@@ -290,11 +290,28 @@ show reg
 ^x ^a # to open up TUI mode
 layout next # use the assembly view
 ```
-Bypassing license key
+### Bypassing license key
 ```
 break main
 r a
 ni # until the 2nd jne
 set $eflags ^= (1<<6)
 c
+```
+### Format string (stonks)
+just spam `%x` to print stuff on the stack
+
+### Buffer Overflow (buffer overflow 1)
+It seems like `get_return_address()` is an internal picoCTF function in `asm.h` [source](https://www.wclaymoody.com/blog/a-pwny-for-your-thoughts/).
+
+Using Radare2,
+```
+aaa
+s main
+ood
+pd
+VV p
+dc
+<F7> # to step 
+. # to return to %rip
 ```
